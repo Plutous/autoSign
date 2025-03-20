@@ -55,7 +55,9 @@ function unLock() {
     device.keepScreenOn(3600 * 1000);
     log("开始解锁设备");
     sleep(500);
-    if (swipe(dwidth * 1 / 2, dheight * 0.96, dwidth * 1 / 2, dheight * 1 / 2, 300)) {
+    // 不知为何swipe滑动持续时间210就可以打开屏幕，其他就不能打开小米6x的屏幕
+    // 例如300时就打不开屏幕
+    if (swipe(dwidth * 1 / 2, dheight * 0.96, dwidth * 1 / 2, dheight * 1 / 2, 210)) {
         log("上滑成功");
     } else {
         gesture(100, [dwidth * 1 / 2, dheight * 0.96], [dwidth * 1 / 2, dheight * 1 / 2]);
@@ -281,7 +283,8 @@ function findCenter() {
         toastLog("请求截图失败", "forcible");
         exit();
     }
-    sleep(1000)
+    // 休眠2s再截图
+    sleep(2000)
     var pictures2 = images.clip(captureScreen(), 0, 0, dwidth, dheight);
     images.save(pictures2, "./tmp/pictures2.png", "png", 100);
     var img2 = images.read("./tmp/pictures2.png");
@@ -307,7 +310,8 @@ function findCenter() {
         wx.recycle();
         qd(); //开始签到
     } else {
-        toastLog("没有找到滑块", "forcible");
+        // 可能是因为pictures2截图截太快了，没截好。改成休眠2s的
+        toastLog("没有在pictures2中找到滑块", "forcible");
     }
     // sleep(500);
 }
@@ -646,7 +650,7 @@ function level2() {
         //     var num = parseInt(demo.text().replace("+", ""));
         //     count += num;
         // }
-        var diff = todayValue - yesterdayValue;;
+        var diff = todayValue - yesterdayValue;
         if (yesterdayValue == 0) {
             //第一次使用脚本
             result = ("第一次使用脚本，初始成长值：" + todayValue);
