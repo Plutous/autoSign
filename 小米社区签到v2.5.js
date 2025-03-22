@@ -1028,8 +1028,8 @@ function 小程序签到() {
       if (config.坐标点击) {
         click(config.x, config.y);
         toastLog("点击坐标进入小程序: " + config.x + "," + config.y);
-        // 小程序进的有点慢，多延时会
-        sleep(3000);
+        // 多延时会，防止正加载小程序呢，结果报错未找到小程序
+        sleep(10000);
       }
       // 点击坐标还是没进入小程序，用第二种方法
       if (!xiaomiProgramIndex.exists()) {
@@ -1065,7 +1065,7 @@ function 小程序签到() {
           click(xiaomiProgramIcon.centerX(), xiaomiProgramIcon.centerY());
           toastLog("点击小米社区", "forcible");
           // 小程序进的有点慢，多延时会
-          sleep(3000);
+          sleep(4000);
         }
       }
     }
