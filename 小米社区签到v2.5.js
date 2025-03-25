@@ -1,11 +1,11 @@
 /*
-*小米社区自动签到脚本
-*
-* 原作者  by：PJ小宇    QQ：898811295
-* 修改    by：风中拾叶
-* 三改    by：wengzhenquan
-* 版本号：20250320
-*/
+ *小米社区自动签到脚本
+ *
+ * 原作者  by：PJ小宇    QQ：898811295
+ * 修改    by：风中拾叶
+ * 三改    by：wengzhenquan
+ * 版本号：20250320
+ */
 
 // 引入配置文件
 var config = require("./config.js");
@@ -838,7 +838,17 @@ function 活动1() {
         sleep(500);
       }
     }
-    解锁();
+    // 判断是否进入双旗舰页面
+    let text = className("android.widget.TextView")
+      .text("双旗舰新征程")
+      .find(1500);
+    if (text.exists()) {
+      toastLog("已经进入双旗舰主页面", "forcible");
+      解锁();
+    } else {
+      toastLog("ERROR: 未能进入双旗舰主页面", "forcible");
+    }
+
     sleep(500);
     back();
   } else {
@@ -1030,6 +1040,9 @@ function 小程序签到() {
         toastLog("点击坐标进入小程序: " + config.x + "," + config.y);
         // 多延时会，防止正加载小程序呢，结果报错未找到小程序
         sleep(10000);
+        xiaomiProgramIndex = className("android.widget.ImageButton")
+        .desc("更多")
+        .packageName("com.tencent.mm");
       }
       // 点击坐标还是没进入小程序，用第二种方法
       if (!xiaomiProgramIndex.exists()) {
@@ -1295,10 +1308,17 @@ function main() {
   device.keepScreenOn(1);
   device.cancelKeepingAwake();
 
+  // 5.点击桌面一键锁屏按钮
+  if (config.lockScreen) {
+    sleep(200);
+    click(config.lockX, config.lockY);
+  }
+
   try {
     exit();
   } catch (e) {
     // Ignored.
+    toastLog("exit()失败" + e, "forcible");
   }
   return;
 }
