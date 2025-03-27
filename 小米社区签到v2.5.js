@@ -839,10 +839,18 @@ function 活动1() {
       }
     }
     // 判断是否进入双旗舰页面
-    let text = className("android.widget.TextView")
-      .text("双旗舰新征程")
-      .find(1500);
-    if (text.exists()) {
+    let text;
+    if (config.oldDevice) {
+      text = className("android.view.View").text("双旗舰新征程").find(1500);
+    } else {
+      text = className("android.widget.TextView")
+        .text("双旗舰新征程")
+        .find(1500);
+    }
+    // toastLog("text:" + text, "forcible");
+    // 输出length=1
+    // toastLog("textlen:" + text.length, "forcible");
+    if (text.length > 0) {
       toastLog("已经进入双旗舰主页面", "forcible");
       解锁();
     } else {
@@ -875,15 +883,21 @@ function ganenji() {
 
 //  这里有bug，啥时候测试一下，可解锁的className估计不对
 function 解锁() {
-  let jpso = className("TextView").text("可解锁").find();
+  let jpso;
+  // 小米6x和小米14布局不同
+  if (config.oldDevice) {
+    jpso = className("android.view.View").text("可解锁").find();
+  } else {
+    jpso = className("TextView").text("可解锁").find();
+  }
   let count = className("android.widget.Button")
     .text("去提升")
     .findOne(1500)
     .parent()
     .child(1)
     .text();
-  toastLog("解锁次数: " + count, "forcible");
-  if (jpso.size() > 0 && count > 0) {
+  toastLog("可解锁盒子数量: " + jpso.length + ", 可解锁次数: " + count, "forcible");
+  if (jpso.length > 0 && count > 0) {
     for (i = 0; i < jpso.size(); i++) {
       var control = jpso.get(i);
       if (count < 1) {
@@ -892,12 +906,24 @@ function 解锁() {
         break;
       }
       control.click();
+      // 解锁次数-1
+      count--;
       log("第" + (i + 1) + "次解锁");
-      sleep(500);
+      // 多睡会
+      sleep(3000);
       click(dwidth * 0.5, dheight * 0.87);
-      if (
-        className("android.widget.TextView").text("可获得1次解锁机会").exists()
-      ) {
+      // 显示这个字说明没有解锁次数
+      let noFrequency;
+      if (config.oldDevice) {
+        noFrequency = className("android.view.View")
+          .text("可获得1次解锁机会")
+          .find();
+      } else {
+        noFrequency = className("android.widget.TextView")
+          .text("可获得1次解锁机会")
+          .find();
+      }
+      if (noFrequency.length > 0) {
         toastLog("解锁次数不足", "forcible");
         sleep(500);
         break;
@@ -1041,8 +1067,8 @@ function 小程序签到() {
         // 多延时会，防止正加载小程序呢，结果报错未找到小程序
         sleep(10000);
         xiaomiProgramIndex = className("android.widget.ImageButton")
-        .desc("更多")
-        .packageName("com.tencent.mm");
+          .desc("更多")
+          .packageName("com.tencent.mm");
       }
       // 点击坐标还是没进入小程序，用第二种方法
       if (!xiaomiProgramIndex.exists()) {

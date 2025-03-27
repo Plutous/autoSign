@@ -22,7 +22,14 @@
 3. 优化代码，用try-catch把每一个功能块包裹，不要因为一个的异常影响其他功能
 4. 添加几个默认配置，由config可以自由选择用哪个
 
+```
+let noFrequency = className("android.widget.TextView")
+        .text("可获得1次解锁机会")
+        .find();
+if (noFrequency.exists()) 
 
+find()返回的一个uiobjectcollection集合，个数应该用length判断。
+```
 
 ------
 
